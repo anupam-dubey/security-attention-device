@@ -13,6 +13,7 @@ double volt;
 #define ADC_MULTISAMPLING_SAMPLES (1 << ADC_MULTISAMPLING)
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 bool activate = 0;
+bool sms_bit = 0;
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0; 
 uint8_t tmp,tmp1,ss,trials,aa; 
@@ -111,6 +112,7 @@ void setup() {
  ss=0;
  minutes=0;
  trials=0;
+ sms_bit=0;
  delay(1000);
  readStringFromEEPROM(0x00, &mobone);
  mobone.remove(0, 1);
@@ -159,12 +161,13 @@ void loop() {
  if(activate==1)
  {//short_beep();
   long_beep();
-   if(((ee_delay-minutes-1)<=0) && (ss==59))
+   if(sms_bit==1)
    {
     lcd.clear();
     lcd.print("Sending sms");
     SendMessage();
     lcd.clear();
+    sms_bit=0;
    }
  }
  }
@@ -183,7 +186,7 @@ void loop() {
  
  
  if(((ee_delay-minutes-1)<=0) && (ss==59))
- {minutes=0; 
+ {minutes=0; sms_bit=1;
  // trials=trials+1;
   activate=1;
   short_beep();
