@@ -128,9 +128,9 @@ void setup() {
  Serial.println(day_delay);
  night_delay= EEPROM.read(0x35);
  Serial.println(night_delay);
- t = rtc.getTime();
+ /*t = rtc.getTime();
  Serial.println(t.hour,DEC);
- 
+ */
  n=read_serial(5000);
  //SendMessage();
   if(n==1)
@@ -152,17 +152,20 @@ void loop() {
   lcd.print(volt,1);
 
  ss=ss+1;
- Serial.println(ee_delay);
+// Serial.println(ee_delay);
  if(ss>59)
  {ss=0;
  minutes++;
  if(activate==1)
  {//short_beep();
   long_beep();
+   if(((ee_delay-minutes-1)<=0) && (ss==59))
+   {
     lcd.clear();
-  lcd.print("Sending sms");
+    lcd.print("Sending sms");
     SendMessage();
     lcd.clear();
+   }
  }
  }
  lcd.setCursor(0,1);
@@ -347,11 +350,13 @@ void Timeset() {
   while (Serial.available() == 0) {}
   tmp1 = Serial.parseInt();
   EEPROM.write(0x30, tmp1);
+  Serial.println(tmp1);
    while(Serial.read() >= 0) ;
   Serial.println  ("NIGHT Time delay (0-59) Minutes - ");
   while (Serial.available() == 0) {}
   tmp1 = Serial.parseInt();
   EEPROM.write(0x35, tmp1);
+  Serial.println(tmp1);
 }
 void SendMessage()
 { int tr;
@@ -364,7 +369,7 @@ void SendMessage()
   mySerial.print(mobone);
   mySerial.println("\"\r"); // Replace x with mobile number
   delay(1000);
-  mySerial.print("I am SMS from GSM Module");// The SMS text you want to send
+  mySerial.print("The gatemen is not attentive at gate. Please contact him imeediately");// The SMS text you want to send
   delay(100);
   mySerial.print((char)26);// ASCII code of CTRL+Z
   delay(4000);
@@ -378,7 +383,7 @@ void SendMessage()
   mySerial.print(mobtwo);
   mySerial.println("\"\r"); // Replace x with mobile number
   delay(1000);
-  mySerial.print("I am SMS from GSM Module");// The SMS text you want to send
+  mySerial.print("The gatemen is not attentive at gate. Please contact him imeediately");// The SMS text you want to send
   delay(100);
   mySerial.print((char)26);// ASCII code of CTRL+Z
   delay(3000);
@@ -392,7 +397,7 @@ void SendMessage()
   mySerial.print(mobthree);
   mySerial.println("\"\r"); // Replace x with mobile number
   delay(1000);
-  mySerial.print("I am SMS from GSM Module");// The SMS text you want to send
+  mySerial.print("The gatemen is not attentive at gate. Please contact him imeediately");// The SMS text you want to send
   delay(100);
   mySerial.print((char)26);// ASCII code of CTRL+Z
   delay(3000);
