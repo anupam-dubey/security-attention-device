@@ -8,6 +8,8 @@ DS3231  rtc(SDA, SCL);
 #define RLY 13
 #define BTN 12
 #define BUZ 11
+#define SBUZ 10
+
 double volt;
 #define ADC_MULTISAMPLING 5
 #define ADC_MULTISAMPLING_SAMPLES (1 << ADC_MULTISAMPLING)
@@ -158,9 +160,10 @@ void loop() {
  if(ss>59)
  {ss=0;
  minutes++;
+ short_beep();
  if(activate==1)
  {//short_beep();
-  long_beep();
+  //long_beep();
    if(sms_bit==1)
    {
     lcd.clear();
@@ -174,6 +177,8 @@ void loop() {
  lcd.setCursor(0,1);
  lcd.print("Rem-");
  aa=ee_delay-minutes-1;
+ if(aa<0)
+ aa=0;
  lcd.write(byte(0x30+(aa/10)));
  lcd.write(byte(0x30+(aa%10)));
  lcd.print(":");
@@ -209,21 +214,21 @@ void loop() {
   }*/
  }
  }
- if((digitalRead(BTN)==LOW) && (activate==1))
+ if((digitalRead(BTN)==LOW) )
  {
-  delay(500);
+  delay(500);short_beep();
   lcd.clear();
   lcd.print("  **OK** ");
   delay(500);ss=0;minutes=0;
   activate=0;trials=0;
  }
  if(activate==1)
- digitalWrite(10,HIGH);
+ digitalWrite(11,HIGH);
  else
- digitalWrite(10,LOW);
+ digitalWrite(11,LOW);
  
  t = rtc.getTime();
- if(t.hour>=0 && t.hour<=6)
+ if(t.hour>=23 && t.hour<=6)
  {
   ee_delay=night_delay;
  }
@@ -360,6 +365,12 @@ void Timeset() {
   tmp1 = Serial.parseInt();
   EEPROM.write(0x35, tmp1);
   Serial.println(tmp1);
+  day_delay= EEPROM.read(0x30);
+   night_delay= EEPROM.read(0x35);
+  ss=0;
+ minutes=0;
+ trials=0;
+ sms_bit=0;
 }
 void SendMessage()
 { int tr;
@@ -372,7 +383,7 @@ void SendMessage()
   mySerial.print(mobone);
   mySerial.println("\"\r"); // Replace x with mobile number
   delay(1000);
-  mySerial.print("The gatemen is not attentive at gate. Please contact him imeediately");// The SMS text you want to send
+  mySerial.print("The gatemen is not attentive at LC gate 179T. Please contact him imediately");// The SMS text you want to send
   delay(100);
   mySerial.print((char)26);// ASCII code of CTRL+Z
   delay(4000);
@@ -386,7 +397,7 @@ void SendMessage()
   mySerial.print(mobtwo);
   mySerial.println("\"\r"); // Replace x with mobile number
   delay(1000);
-  mySerial.print("The gatemen is not attentive at gate. Please contact him imeediately");// The SMS text you want to send
+  mySerial.print("The gatemen is not attentive at LC gate 179T. Please contact him imediately");// The SMS text you want to send
   delay(100);
   mySerial.print((char)26);// ASCII code of CTRL+Z
   delay(3000);
@@ -400,7 +411,7 @@ void SendMessage()
   mySerial.print(mobthree);
   mySerial.println("\"\r"); // Replace x with mobile number
   delay(1000);
-  mySerial.print("The gatemen is not attentive at gate. Please contact him imeediately");// The SMS text you want to send
+  mySerial.print("The gatemen is not attentive at LC gate 179T. Please contact him imediately");// The SMS text you want to send
   delay(100);
   mySerial.print((char)26);// ASCII code of CTRL+Z
   delay(3000);
